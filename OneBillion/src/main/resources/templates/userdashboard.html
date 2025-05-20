@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+user
+<form th:action="@{/user/otppage}" method="get">
+    <button type="submit" th:if="${!isVerified}" style="background-color: red; color: white;">Email Otp</button>
+</form>
+<button th:if="${isVerified}" style="background-color: green; color: white;">Verified</button>
+</body>
+</html>

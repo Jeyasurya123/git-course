@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OTP Verification</title>
+  <style>
+    #resendBtn {
+        display: none; /* Initially hide the Resend button */
+    }
+  </style>
+</head>
+<body>
+<h2>OTP Verification</h2>
+
+<form th:action="@{/user/usr}" method="get">
+<button type="submit">go back</button>
+</form>
+
+<!-- Form to send OTP -->
+<form id="sendOtpForm" action="/user/send-otp" method="post" th:if="${showSendOtpForm}">
+  <label for="email">Email:</label>
+  <input type="email" id="email" name="email" placeholder="Enter your email" required />
+  <button type="submit">Send OTP</button>
+</form>
+
+<!-- Form to Verify OTP -->
+<form id="verifyOtpForm" action="/user/verify-otp" method="post" th:if="${showVerifyOtpForm}">
+  <label for="email1">Email:</label>
+  <input type="email" id="email1" name="email" th:value="${email}" readonly required />
+
+  <label for="otp">OTP:</label>
+  <input type="text" id="otp" name="otp" placeholder="Enter the OTP" required />
+
+  <p id="timer">Time remaining: 30s</p> <!-- Timer display -->
+
+  <button type="submit">Verify OTP</button>
+</form>
+
+<form th:action="@{/user/resend-otp}" method="post">
+<!-- Resend OTP Button -->
+<button id="resendBtn" style="display: none;">Resend OTP</button>
+</form>
+<script>
+  let timer; // To store the reference of setInterval
+  let timeLeft = 30; // Set the time limit to 30 seconds
+
+  // Function to start the countdown timer
+  function startTimer() {
+      // Get the timer element where the countdown will be displayed
+      const timerElement = document.getElementById("timer");
+
+      // Reset timeLeft to 30 seconds when timer is restarted
+      timeLeft = 30;
+
+      // Display the initial timer
+      timerElement.innerText = `Time remaining: ${timeLeft}s`;
+
+      // Update the countdown every second
+      timer = setInterval(() => {
+          if (timeLeft > 0) {
+              timeLeft--;
+              timerElement.innerText = `Time remaining: ${timeLeft}s`;
+          } else {
+              clearInterval(timer); // Stop the timer when it reaches 0
+              timerElement.innerText = "OTP expired. Please resend.";
+              document.getElementById("resendBtn").style.display = "block"; // Show the "Resend OTP" button
+          }
+      }, 1000);
+  }
+
+  // Function to reset the timer when the "Resend OTP" button is clicked
+  function resetTimer() {
+      clearInterval(timer); // Stop the current timer
+      startTimer(); // Start a new timer
+  }
+
+  // Automatically start the timer when OTP is sent or verified
+  startTimer();
+</script>
+</body>
+</html>
